@@ -77,6 +77,16 @@ class Shape {
     strokeWeight(this.borderWidth); // Set the border width
     fill(this.color); // Set the fill color
 
+
+    if (this.type === 'rectangle' && this.x === 600 && this.y === 650) {
+      let freq = spectrum[20]; // Get a frequency value from the spectrum
+      let r = map(freq, 0, 255, 255, 250); // Map the frequency to the red channel
+      let g = map(freq, 0, 255, 205, 0); // Map the frequency to the green channel
+      let b = map(freq, 0, 255, 0, 0); // Map the frequency to the blue channel
+      fill(r, g, b); // Set the fill color to the mapped RGB values
+    }
+
+
     if (this.type === 'line' && this.x === 50 && this.y === 615 && this.endX === 380 && this.endY === 500) {
         let freq = spectrum[5];
         let angle = map(freq, 0, 255, -PI / 5, PI / 5);
