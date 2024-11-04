@@ -78,33 +78,29 @@ class Shape {
     fill(this.color); // Set the fill color
 
     if (this.type === 'line' && this.x === 50 && this.y === 615 && this.endX === 380 && this.endY === 500) {
-        // Specific line oscillating around point (50, 615)
-        let freq = spectrum[5]; // Get a frequency value from the spectrum
-        let angle = map(freq, 0, 255, -PI / 5, PI / 5); // Map the frequency value to an angle
-
-        // Calculate the swinging endpoint coordinates
-        let length = dist(this.x, this.y, this.endX, this.endY); // Calculate the length of the line
-        let newEndX = this.x + length * cos(angle); // Calculate new endX based on angle
-        let newEndY = this.y + length * sin(angle); // Calculate new endY based on angle
-
-        line(this.x, this.y, newEndX, newEndY); // Draw the line
+        let freq = spectrum[5];
+        let angle = map(freq, 0, 255, -PI / 5, PI / 5);
+        let length = dist(this.x, this.y, this.endX, this.endY);
+        let newEndX = this.x + length * cos(angle);
+        let newEndY = this.y + length * sin(angle);
+        line(this.x, this.y, newEndX, newEndY);
     } else if (this.type === 'line' && this.x === 300 && this.y === 200) {
-        // Another specific line's frequency response oscillation effect
         let freq = spectrum[5];
         let swing = map(freq, 0, 255, -100, 100);
         line(this.x, this.y, this.endX, this.y + swing);
     } else if (this.color === '#FFD700' && this.type === 'line') {
-        // For specific yellow lines responding to frequency changes
-        let freq = spectrum[5]; // Get a frequency value from the spectrum
-        let length = map(freq, 0, 255, 50, 150); // Map frequency to line length
-
-        line(this.x, this.y, this.x, this.y + length); // Draw line with varying length
+        let freq = spectrum[5];
+        let length = map(freq, 0, 255, 50, 150);
+        line(this.x, this.y, this.x, this.y + length);
     } else if (this.color === '#F34213' && this.type === 'circle') {
-        // Other shapes size responding to frequency data
         let sizeFactor = map(spectrum[0], 0, 255, 50, 400);
         ellipse(this.x + sizeFactor / 2, this.y + sizeFactor / 2, sizeFactor);
+    } else if (this.color === '#555555' && this.type === 'circle') {
+        // For specific gray circles to respond to frequency changes
+        let freq = spectrum[5]; // Get a frequency value from the spectrum
+        let offset = map(freq, 0, 255, -5, 5); // Map frequency to offset range
+        ellipse(this.x + offset, this.y+15, this.baseWidth); // Move circles based on frequency
     } else {
-        // Render other static shapes
         if (this.type === 'line') {
             line(this.x, this.y, this.endX, this.endY);
         } else if (this.type === 'circle') {
@@ -121,10 +117,11 @@ class Shape {
             );
         }
     }
-  }
+}
 }
 
 function createArtwork() {
+
   mondrian.addShape(0, 0, 800, 800, '#F8F8FF', '#000000', 1, 'rectangle'); 
 
   mondrian.addShape(300, 200, 0, 0, '#000000', '#000000', 2, 'line', 800, 50); 
@@ -155,8 +152,6 @@ function createArtwork() {
   mondrian.addShape(300, 260, 400, 100, '#0056B4', '#000000', 2, 'rectangle'); 
   mondrian.addShape(400, 630, 400, 50, '#0056B4', '#000000', 2, 'rectangle'); 
 
-  mondrian.addShape(400, 230, 40, 50, '#FFD700', '#000000', 0, 'circle'); 
-  mondrian.addShape(570, 230, 40, 50, '#FFD700', '#000000', 0, 'circle'); 
 
  mondrian.addShape(150, 520, 50, 50, '#F34213', '#000000', 0, 'circle'); 
  mondrian.addShape(40, 570, 50, 50, '#000000', '#000000', 0, 'circle'); 
@@ -170,12 +165,16 @@ function createArtwork() {
  
   mondrian.addShape(600, 309, 100, 100, '#F34213', '#000000', 2, 'semicircle'); 
  
+
+//cat
   mondrian.addShape(445, 150, 50, 50, '	#FFD700', '#000000', 0, 'triangle'); 
   mondrian.addShape(515, 150, 50, 50, '	#FFD700', '#000000', 0, 'triangle'); 
   mondrian.addShape(445, 200, 120, 60, '	#FFD700', '#000000', 0, 'rectangle'); 
+
+  mondrian.addShape(400, 230, 40, 50, '#FFD700', '#000000', 0, 'circle'); 
+  mondrian.addShape(570, 230, 40, 50, '#FFD700', '#000000', 0, 'circle'); 
+
+  mondrian.addShape(470, 210, 15, 80, '#555555', '#000000', 0, 'circle');
+  mondrian.addShape(525, 210, 15, 80, '#555555', '#000000', 0, 'circle');
 }
-
-
-
-
 
