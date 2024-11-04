@@ -79,29 +79,34 @@ class Shape {
   
     let sizeFactor; // Initialize size factor for adjusting size
   
-    // Adjust size for circles of a specific color
-    if (this.color === '#F34213' && this.type === 'circle') {
-      sizeFactor = map(spectrum[0], 0, 255, 50, 400); // Map the first frequency value to size
-      ellipse(this.x + sizeFactor / 2, this.y + sizeFactor / 2, sizeFactor); // Draw circle with adjusted size
+    if (this.type === 'line' && this.color === '#FFD700') {
+        // Adjust length dynamically for yellow lines based on frequency data
+        let freq = spectrum[5]; // Select a specific frequency value, e.g., index 5
+        let newEndY = map(freq, 0, 255, this.y, this.y + 200); // Adjust the endY based on frequency
+        line(this.x, this.y, this.endX, newEndY); // Draw line with dynamic endY
+    } else if (this.color === '#F34213' && this.type === 'circle') {
+        // Adjust size dynamically for specific color circles
+        sizeFactor = map(spectrum[0], 0, 255, 50, 400); // Map the first frequency value to size
+        ellipse(this.x + sizeFactor / 2, this.y + sizeFactor / 2, sizeFactor); // Draw circle with adjusted size
     } else {
-      // For other shapes, maintain original size or execute other logic
-      if (this.type === 'circle') {
-        ellipse(this.x + this.baseWidth / 2, this.y + this.baseHeight / 2, this.baseWidth); // Draw circle with base width
-      } else if (this.type === 'rectangle') {
-        rect(this.x, this.y, this.baseWidth, this.baseHeight); // Draw rectangle
-      } else if (this.type === 'semicircle') {
-        arc(this.x + this.baseWidth / 2, this.y + this.baseHeight / 2, this.baseWidth, this.baseHeight, 0, PI); // Draw semicircle
-      } else if (this.type === 'triangle') {
-        triangle(
-          this.x + this.baseWidth / 2, this.y, // Top vertex
-          this.x, this.y + this.baseHeight, // Bottom left vertex
-          this.x + this.baseWidth, this.y + this.baseHeight // Bottom right vertex
-        ); // Draw triangle
-      } else if (this.type === 'line') {
-        line(this.x, this.y, this.endX, this.endY); // Draw line from (x, y) to (endX, endY)
-      }
+        // Render other shapes normally without dynamic adjustments
+        if (this.type === 'line') {
+            line(this.x, this.y, this.endX, this.endY); // Draw static line
+        } else if (this.type === 'circle') {
+            ellipse(this.x + this.baseWidth / 2, this.y + this.baseHeight / 2, this.baseWidth); // Draw circle with base width
+        } else if (this.type === 'rectangle') {
+            rect(this.x, this.y, this.baseWidth, this.baseHeight); // Draw rectangle
+        } else if (this.type === 'semicircle') {
+            arc(this.x + this.baseWidth / 2, this.y + this.baseHeight / 2, this.baseWidth, this.baseHeight, 0, PI); // Draw semicircle
+        } else if (this.type === 'triangle') {
+            triangle(
+                this.x + this.baseWidth / 2, this.y, // Top vertex
+                this.x, this.y + this.baseHeight, // Bottom left vertex
+                this.x + this.baseWidth, this.y + this.baseHeight // Bottom right vertex
+            ); // Draw triangle
+        }
     }
-  }
+}
 }
 
 function createArtwork() {
