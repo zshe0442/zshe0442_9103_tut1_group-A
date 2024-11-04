@@ -76,37 +76,52 @@ class Shape {
     stroke(this.borderColor); // Set the border color
     strokeWeight(this.borderWidth); // Set the border width
     fill(this.color); // Set the fill color
-  
-    let sizeFactor; // Initialize size factor for adjusting size
-  
-    if (this.type === 'line' && this.color === '#FFD700') {
-        // Adjust length dynamically for yellow lines based on frequency data
-        let freq = spectrum[5]; // Select a specific frequency value, e.g., index 5
-        let newEndY = map(freq, 0, 255, this.y, this.y + 200); // Adjust the endY based on frequency
-        line(this.x, this.y, this.endX, newEndY); // Draw line with dynamic endY
+
+    if (this.type === 'line' && this.x === 50 && this.y === 615 && this.endX === 380 && this.endY === 500) {
+        // Specific line oscillating around point (50, 615)
+        let freq = spectrum[5]; // Get a frequency value from the spectrum
+        let angle = map(freq, 0, 255, -PI / 5, PI / 5); // Map the frequency value to an angle
+
+        // Calculate the swinging endpoint coordinates
+        let length = dist(this.x, this.y, this.endX, this.endY); // Calculate the length of the line
+        let newEndX = this.x + length * cos(angle); // Calculate new endX based on angle
+        let newEndY = this.y + length * sin(angle); // Calculate new endY based on angle
+
+        line(this.x, this.y, newEndX, newEndY); // Draw the line
+    } else if (this.type === 'line' && this.x === 300 && this.y === 200) {
+        // Another specific line's frequency response oscillation effect
+        let freq = spectrum[5];
+        let swing = map(freq, 0, 255, -100, 100);
+        line(this.x, this.y, this.endX, this.y + swing);
+    } else if (this.color === '#FFD700' && this.type === 'line') {
+        // For specific yellow lines responding to frequency changes
+        let freq = spectrum[5]; // Get a frequency value from the spectrum
+        let length = map(freq, 0, 255, 50, 150); // Map frequency to line length
+
+        line(this.x, this.y, this.x, this.y + length); // Draw line with varying length
     } else if (this.color === '#F34213' && this.type === 'circle') {
-        // Adjust size dynamically for specific color circles
-        sizeFactor = map(spectrum[0], 0, 255, 50, 400); // Map the first frequency value to size
-        ellipse(this.x + sizeFactor / 2, this.y + sizeFactor / 2, sizeFactor); // Draw circle with adjusted size
+        // Other shapes size responding to frequency data
+        let sizeFactor = map(spectrum[0], 0, 255, 50, 400);
+        ellipse(this.x + sizeFactor / 2, this.y + sizeFactor / 2, sizeFactor);
     } else {
-        // Render other shapes normally without dynamic adjustments
+        // Render other static shapes
         if (this.type === 'line') {
-            line(this.x, this.y, this.endX, this.endY); // Draw static line
+            line(this.x, this.y, this.endX, this.endY);
         } else if (this.type === 'circle') {
-            ellipse(this.x + this.baseWidth / 2, this.y + this.baseHeight / 2, this.baseWidth); // Draw circle with base width
+            ellipse(this.x + this.baseWidth / 2, this.y + this.baseHeight / 2, this.baseWidth);
         } else if (this.type === 'rectangle') {
-            rect(this.x, this.y, this.baseWidth, this.baseHeight); // Draw rectangle
+            rect(this.x, this.y, this.baseWidth, this.baseHeight);
         } else if (this.type === 'semicircle') {
-            arc(this.x + this.baseWidth / 2, this.y + this.baseHeight / 2, this.baseWidth, this.baseHeight, 0, PI); // Draw semicircle
+            arc(this.x + this.baseWidth / 2, this.y + this.baseHeight / 2, this.baseWidth, this.baseHeight, 0, PI);
         } else if (this.type === 'triangle') {
             triangle(
-                this.x + this.baseWidth / 2, this.y, // Top vertex
-                this.x, this.y + this.baseHeight, // Bottom left vertex
-                this.x + this.baseWidth, this.y + this.baseHeight // Bottom right vertex
-            ); // Draw triangle
+                this.x + this.baseWidth / 2, this.y,
+                this.x, this.y + this.baseHeight,
+                this.x + this.baseWidth, this.y + this.baseHeight
+            );
         }
     }
-}
+  }
 }
 
 function createArtwork() {
@@ -145,7 +160,7 @@ function createArtwork() {
 
  mondrian.addShape(150, 520, 50, 50, '#F34213', '#000000', 0, 'circle'); 
  mondrian.addShape(40, 570, 50, 50, '#000000', '#000000', 0, 'circle'); 
- mondrian.addShape(50, 615, 0, 0, '#000000', '#000000', 3, 'line', 380, 500); 
+ mondrian.addShape(50, 615, 0, 0, '#000000', '#000000', 2, 'line', 380, 500); 
 
   mondrian.addShape(180, 400, 50, 40, '#000000', '#000000', 2, 'rectangle'); 
   mondrian.addShape(600, 650, 70, 150, '#FFA500', '#000000', 1, 'rectangle'); 
