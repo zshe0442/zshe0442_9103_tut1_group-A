@@ -1,104 +1,104 @@
-let mondrian;
-let sound; 
+let mondrian; // Variable to hold the artwork object
+let sound; // Variable to hold the sound object
+let fft; // FFT object for frequency analysis
 
 function preload() {
-  
-  sound = loadSound("assets/The Entertainer.mp3"); 
+  sound = loadSound("assets/The Entertainer.mp3"); // Load the sound file
 }
 
 function setup() {
-  createCanvas(800, 800);
-  mondrian = new Artwork();
-  createArtwork();
-  noLoop();
+  createCanvas(800, 800); // Create a canvas of size 800x800 pixels
+  mondrian = new Artwork(); // Initialize a new Artwork object
+  createArtwork(); // Create the artwork by adding shapes
+
+  // Initialize FFT for frequency analysis
+  fft = new p5.FFT(); // Create a new FFT object
+  sound.amp(0.5); // Set the sound volume to 50%
+  noLoop(); // Prevent the draw function from looping initially
   
-  
-  let playButton = createButton('play_pause');
-  playButton.position(10, 820);
-  playButton.mousePressed(play_pause);
+  // Create a button to play or pause the sound
+  let playButton = createButton('Play/Pause');
+  playButton.position(10, 820); // Position the button at (10, 820)
+  playButton.mousePressed(play_pause); // Attach the play/pause function to the button
 }
 
 function draw() {
-  background(255);
-  mondrian.show();
+  background(255); // Set the background color to white
+  let spectrum = fft.analyze(); // Get the frequency spectrum data
+
+  mondrian.show(spectrum); // Pass the spectrum data to the artwork for rendering
 }
 
 function play_pause() {
+  // Toggle play and pause for the sound
   if (sound.isPlaying()) {
-    sound.pause(); 
+    sound.pause(); // Pause the sound if it's currently playing
+    noLoop(); // Stop the draw function when paused
   } else {
-    sound.loop();
+    sound.loop(); // Start looping the sound
+    loop(); // Start the draw function again
   }
 }
 
-
-
-
-
-
 class Artwork {
   constructor() {
-    this.shapes = []; 
+    this.shapes = []; // Array to hold shapes in the artwork
   }
 
   addShape(x, y, width, height, color, borderColor, borderWidth, type, endX = null, endY = null) {
+    // Add a new shape to the artwork
     this.shapes.push(new Shape(x, y, width, height, color, borderColor, borderWidth, type, endX, endY));
   }
 
-  show() {
+  show(spectrum) {
+    // Render all shapes with the given spectrum data
     for (let shape of this.shapes) {
-      shape.show(); 
+      shape.show(spectrum); // Pass the spectrum data to each shape
     }
   }
 }
 
 class Shape {
   constructor(x, y, width, height, color, borderColor, borderWidth, type, endX, endY) {
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-    this.color = color;       
-    this.borderColor = borderColor;
-    this.borderWidth = borderWidth; 
-    this.type = type;       
-    this.endX = endX;        
-    this.endY = endY;        
+    this.x = x; // X position of the shape
+    this.y = y; // Y position of the shape
+    this.baseWidth = width; // Base width for calculating size
+    this.baseHeight = height; // Base height of the shape
+    this.color = color; // Fill color of the shape
+    this.borderColor = borderColor; // Border color of the shape
+    this.borderWidth = borderWidth; // Width of the shape's border
+    this.type = type; // Type of the shape (e.g., circle, rectangle)
+    this.endX = endX; // Ending X position (for lines)
+    this.endY = endY; // Ending Y position (for lines)
   }
 
-  show() {
-    stroke(this.borderColor); 
-    strokeWeight(this.borderWidth); 
-    fill(this.color); 
-
-    if (this.type === 'rectangle') {
-      rect(this.x, this.y, this.width, this.height);
-    } else if (this.type === 'semicircle') {
-      arc(this.x + this.width / 2, this.y + this.height / 2, this.width, this.height, 0, PI);
-    } else if (this.type === 'triangle') {
-     
-      triangle(
-        this.x + this.width / 2, this.y,               
-        this.x, this.y + this.height,                  
-        this.x + this.width, this.y + this.height       
-      );
-    } else if (this.type === 'dotted') {
-      this.drawDottedRect();
-    } else if (this.type === 'circle') {
-      ellipse(this.x + this.width / 2, this.y + this.height / 2, this.width);
-    } else if (this.type === 'line') {
-      line(this.x, this.y, this.endX, this.endY); 
-    }
-  }
-
-  drawDottedRect() {
-    let dotSize = 5; 
-    let spacing = 15; 
-
-    for (let y = this.y; y < this.y + this.height; y += spacing) {
-      for (let x = this.x; x < this.x + this.width; x += spacing) {
-        fill(this.color); 
-        ellipse(x + dotSize / 2, y + dotSize / 2, dotSize, dotSize);
+  show(spectrum) {
+    stroke(this.borderColor); // Set the border color
+    strokeWeight(this.borderWidth); // Set the border width
+    fill(this.color); // Set the fill color
+  
+    let sizeFactor; // Initialize size factor for adjusting size
+  
+    // Adjust size for circles of a specific color
+    if (this.color === '#F34213' && this.type === 'circle') {
+      sizeFactor = map(spectrum[0], 0, 255, 50, 400); // Map the first frequency value to size
+      ellipse(this.x + sizeFactor / 2, this.y + sizeFactor / 2, sizeFactor); // Draw circle with adjusted size
+    } else {
+      // For other shapes, maintain original size or execute other logic
+      if (this.type === 'circle') {
+        ellipse(this.x + this.baseWidth / 2, this.y + this.baseHeight / 2, this.baseWidth); // Draw circle with base width
+      } else if (this.type === 'rectangle') {
+        rect(this.x, this.y, this.baseWidth, this.baseHeight); // Draw rectangle
+      } else if (this.type === 'semicircle') {
+        arc(this.x + this.baseWidth / 2, this.y + this.baseHeight / 2, this.baseWidth, this.baseHeight, 0, PI); // Draw semicircle
+      } else if (this.type === 'triangle') {
+        triangle(
+          this.x + this.baseWidth / 2, this.y, // Top vertex
+          this.x, this.y + this.baseHeight, // Bottom left vertex
+          this.x + this.baseWidth, this.y + this.baseHeight // Bottom right vertex
+        ); // Draw triangle
+      } else if (this.type === 'line') {
+        line(this.x, this.y, this.endX, this.endY); // Draw line from (x, y) to (endX, endY)
       }
     }
   }
